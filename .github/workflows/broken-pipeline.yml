@@ -13,6 +13,8 @@ jobs:
   build-and-test:
     name: Build & Test Gradle Application
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout mã nguồn
@@ -25,7 +27,6 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      # FIX LỖI 1: Cấp quyền thực thi cho Gradle Wrapper
       - name: Cấp quyền thực thi cho gradlew
         run: chmod +x gradlew
 
@@ -45,24 +46,22 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Chuyển tên Repo thành chữ thường
-        run: echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> `$GITHUB_ENV
+        run: echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      # FIX LỖI 2: Đăng nhập Docker Registry chuẩn xác với GITHUB_TOKEN
       - name: Đăng nhập GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: `${{ env.REGISTRY }}
-          username: `${{ github.actor }}
-          password: `${{ secrets.GITHUB_TOKEN }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Thiết lập Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # FIX LỖI 3: Thiết lập Build Context đúng thư mục gốc và chỉ định file Dockerfile
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: `${{ env.REGISTRY }}/`${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
