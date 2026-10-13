@@ -59,7 +59,7 @@ Sau khi chỉnh sửa và đẩy commit mới lên GitHub:
 - Toàn bộ 2 jobs (`build-and-test` và `docker-build`) hoàn thành thuận lợi.
 - Pipeline chuyển trạng thái hoàn toàn sang **Success** (Tích xanh).
 
-//
+![alt text](image.png)
 
 ---
 
